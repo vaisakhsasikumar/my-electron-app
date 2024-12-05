@@ -4,6 +4,7 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    extraResource: ["/backend/"]
   },
   rebuildConfig: {},
   makers: [
@@ -34,14 +35,14 @@ module.exports = {
     {
       name: '@electron-forge/plugin-webpack',
       config: {
-        devContentSecurityPolicy: 'default-src \'self\' \'unsafe-inline\' data:; script-src \'self\' \'unsafe-eval\' \'unsafe-inline\' data:',
+        devContentSecurityPolicy: "connect-src 'self' * 'unsafe-eval'",
         mainConfig: './webpack.main.config.js',
         renderer: {
           config: './webpack.renderer.config.js',
           entryPoints: [
             {
               html: './renderer/public/index.html',
-              js: './renderer/src/index.js',
+              js: './renderer/src/index.jsx',
               name: 'main_window',
             },
           ],

@@ -1,5 +1,6 @@
-const { app, BrowserWindow, Menu } = require("electron");
+import { app, BrowserWindow, Menu, utilityProcess } from "electron";
 import started from 'electron-squirrel-startup';
+import path from "node:path";
 
 let mainWindow;
 
@@ -43,6 +44,11 @@ app.on("ready", () => {
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 
+  /**
+   * Create another process that will run backend code
+   */
+  utilityProcess.fork(path.join(__dirname, "./backend.js"), []);
+
   // Create BrowserWindow
   mainWindow = new BrowserWindow({
     width: 800,
@@ -58,7 +64,7 @@ app.on("ready", () => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Optional: Open DevTools for debugging
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 });
 
 // Graceful exit
