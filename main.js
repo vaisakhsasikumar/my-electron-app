@@ -1,6 +1,12 @@
 const { app, BrowserWindow, Menu } = require("electron");
+import started from 'electron-squirrel-startup';
 
 let mainWindow;
+
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if (started) {
+  app.quit();
+}
 
 app.on("ready", () => {
   // Create the main menu
@@ -49,10 +55,10 @@ app.on("ready", () => {
     }
   });
 
-  mainWindow.loadFile("./renderer/public/index.html");
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Optional: Open DevTools for debugging
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 });
 
 // Graceful exit
