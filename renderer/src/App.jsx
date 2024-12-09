@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-const { ipcRenderer } = window.require('electron');
+import { ipcRenderer } from "electron";
 
 function App() {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
   const [isAdvanced, setIsAdvanced] = useState(false);
   const [history, setHistory] = useState([]);
@@ -116,27 +116,28 @@ function App() {
 
   const handleQuerySubmit = async () => {
     try {
-      const parsedQuery = JSON.parse(query);
-      const response = await fetch('http://localhost:5001/query', {
-        method: 'POST',
+      const parsedQuery = JSON.parse(query); // Parse the query from the text input
+      // Make a POST request to the backend
+      const response = await fetch("http://localhost:5001/query", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ query: parsedQuery }),
       });
 
       if (!response.ok) {
-        throw new Error('Query execution failed');
+        throw new Error("Query execution failed");
       }
 
-      const data = await response.json();
-      setResult(data);
-      setHistory([...history, { query, result: data }]);
+      const data = await response.json(); // Parse the response data
+      setResult(data); // Set the result to the state for display
+      addQueryToHistory(parsedQuery, data);
     } catch (error) {
-      const errorResult = { error: 'Invalid query or server error.' };
+      const errorResult = { error: "Invalid query or server error." };
       console.log({ error });
       setResult(errorResult);
-      setHistory([...history, { query, result: errorResult }]);
+      addQueryToHistory(query, "Invalid query or server error.");
     }
   };
 
@@ -144,6 +145,38 @@ function App() {
     setQuery(item.query);
     setResult(item.result);
   };
+
+  const addQueryToHistory = async (parsedQuery, result) => {
+    try {
+      await fetch("http://localhost:5001/api/queries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: parsedQuery,
+          output: result,
+        }),
+      });
+      fetchHistory();
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
+  const fetchHistory = async () => {
+    const response = await fetch("http://localhost:5001/api/queries");
+    const data = await response.json();
+    if (data.success) {
+      setHistory(data.queries);
+    } else {
+      console.error(data.error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
   return (
     <div className="container mt-5">
@@ -258,7 +291,10 @@ function App() {
               checked={isAdvanced}
               onChange={() => setIsAdvanced(!isAdvanced)}
             />
-            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+            <label
+              className="form-check-label"
+              htmlFor="flexSwitchCheckDefault"
+            >
               Advanced view
             </label>
           </div>
@@ -289,7 +325,11 @@ function App() {
           </div>
 
           {result && (
-            <div className={`card shadow-sm mt-4 ${isAdvanced ? 'sticky-top' : ''}`}>
+            <div
+              className={`card shadow-sm mt-4 ${
+                isAdvanced ? "sticky-top" : ""
+              }`}
+            >
               <div className="card-body">
                 <h5>Query Result</h5>
                 <pre>{JSON.stringify(result, null, 2)}</pre>
@@ -307,7 +347,7 @@ function App() {
                     className={`list-group-item list-group-item-action text-truncate ${theme === 'dark' ? 'dark-list-group-item' : ''}`}
                     onClick={() => handleHistoryItemClick(item)}
                   >
-                    {`Query: ${item.query} | Result: ${JSON.stringify(item.result)}`}
+                    {`Query: ${item.query} | Result: ${item.output}`}
                   </button>
                 ))}
               </div>
