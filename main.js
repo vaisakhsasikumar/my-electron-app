@@ -1,9 +1,12 @@
-import { app, BrowserWindow, Menu, utilityProcess } from "electron";
-import started from "electron-squirrel-startup";
-import { join } from "node:path";
-import electronReload from "electron-reload";
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  utilityProcess
+} = require("electron");
+const path = require("node:path");
+const started = require("electron-squirrel-startup");
 
-electronReload(__dirname, {});
 let mainWindow;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -12,10 +15,6 @@ if (started) {
 }
 
 app.on("ready", () => {
-  /**
-   * Create another process that will run backend code
-   */
-  utilityProcess.fork(join(__dirname, "backend/server.js"), []);
   // Create the main menu
   const template = [
     // { role: 'appMenu' }
@@ -53,7 +52,7 @@ app.on("ready", () => {
   /**
    * Create another process that will run backend code
    */
-  utilityProcess.fork(join(__dirname, "./backend.js"), []);
+  utilityProcess.fork(path.join(__dirname, "./backend.js"), []);
 
   // Create BrowserWindow
   mainWindow = new BrowserWindow({
