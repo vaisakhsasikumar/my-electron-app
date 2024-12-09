@@ -189,3 +189,13 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.titlebar {
+    height: 30px;
+    background: #17af66;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-app-region: drag;
+}

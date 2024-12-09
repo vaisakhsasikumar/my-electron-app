@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import "./styles.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-const { ipcRenderer } = window.require('electron');
+import React, { useState, useEffect } from 'react';
+import { ipcRenderer } from "electron";
 
 function App() {
   const [query, setQuery] = useState("");

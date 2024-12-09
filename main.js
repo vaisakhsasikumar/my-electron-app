@@ -1,42 +1,47 @@
-const { app, BrowserWindow, Menu, utilityProcess } = require("electron");
-const { join } = require("node:path");
-const electronReload = require("electron-reload");
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  utilityProcess
+} = require("electron");
+const path = require("node:path");
+const started = require("electron-squirrel-startup");
 
-electronReload(__dirname, {});
 let mainWindow;
 
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if (started) {
+  app.quit();
+}
+
 app.on("ready", () => {
-  /**
-   * Create another process that will run backend code
-   */
-  utilityProcess.fork(join(__dirname, "backend/server.js"), [])
   // Create the main menu
   const template = [
     // { role: 'appMenu' }
     {
       label: app.name,
       submenu: [
-        { role: 'about' },
-        { type: 'separator' }, // Separator added here
+        { role: "about" },
+        { type: "separator" }, // Separator added here
         {
-          label: 'Settings',
+          label: "Settings",
           click: () => {
             // Send IPC message to renderer to open Settings modal
             if (mainWindow) {
-              mainWindow.webContents.send('open-settings');
+              mainWindow.webContents.send("open-settings");
             }
-          }
+          },
         },
-        { type: 'separator' },
-        { role: 'quit' }
-      ]
+        { type: "separator" },
+        { role: "quit" },
+      ],
     },
     // { role: 'fileMenu' }
     {
-      label: 'File',
+      label: "File",
       submenu: [
-        { role: 'close' } // or { role: 'quit' } based on needs
-      ]
+        { role: "close" }, // or { role: 'quit' } based on needs
+      ],
     },
     // You can add other menu items here if necessary
   ];
@@ -44,19 +49,24 @@ app.on("ready", () => {
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 
+  /**
+   * Create another process that will run backend code
+   */
+  utilityProcess.fork(path.join(__dirname, "./backend.js"), []);
+
   // Create BrowserWindow
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    titleBarStyle: 'hidden',
-    ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}),
+    titleBarStyle: "hidden",
+    ...(process.platform !== "darwin" ? { titleBarOverlay: true } : {}),
     webPreferences: {
       nodeIntegration: true, // Enable Node.js integration
       contextIsolation: false, // Disable context isolation
-    }
+    },
   });
 
-  mainWindow.loadFile("./renderer/public/index.html");
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Optional: Open DevTools for debugging
   // mainWindow.webContents.openDevTools();
@@ -65,7 +75,7 @@ app.on("ready", () => {
 // Graceful exit
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
-    processes.forEach(function(proc) {
+    processes.forEach(function (proc) {
       proc.kill();
     });
     app.quit();

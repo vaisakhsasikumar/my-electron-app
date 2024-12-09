@@ -137,4 +137,7 @@ dist
 /.idea/vcs.xml
 /.idea/workspace.xml
 
+# Webpack
+.webpack/
+
 /localStorage
