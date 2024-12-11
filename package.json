@@ -16,6 +16,7 @@
     "copy-backend": "copyfiles -f backend/**/* dist-electron/",
     "rebuildDB": "electron-rebuild -f -w sqlite3",
     "test": "run-script-os",
+    "test:mjs": "for file in ./tests/*.mjs; do node $file; done",
     "test:default": "if [ -d dist ] && [ -d dist-electron ]; then jest; else tsc && vite build && npm run copy-backend && jest; fi",
     "test:windows": "if exist dist if exist dist-electron (jest) else (tsc && vite build && npm run copy-backend && jest)",
     "postinstall": "electron-builder install-app-deps"
@@ -53,6 +54,7 @@
     "typescript": "^5.2.2",
     "vite": "^5.1.6",
     "vite-plugin-electron": "^0.28.6",
-    "vite-plugin-electron-renderer": "^0.14.5"
+    "vite-plugin-electron-renderer": "^0.14.5",
+    "xvfb": "^0.4.0"
   }
 }
