@@ -78,6 +78,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npm run build
 
+      - name: Run Tests
+        run: npm test --timeout=15000
+
   test:
     name: Run Tests on macOS with Node.js ${{ matrix.node-version }}
     runs-on: macos-latest
