@@ -23,27 +23,23 @@ jobs:
       - name: Github checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Use Node.js with GitHub Packages Auth
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: 'https://registry.npmjs.org/' # Default registry for dependencies
+          registry-url: 'https://npm.pkg.github.com/'
+          scope: '@MartynovIvan'
 
       - name: Update package.json version
         run: |
-          node -e "const fs = require('fs'); const pkg = require('./package.json'); pkg.version = '1.0.0+' + new Date().toLocaleDateString('en-GB').replaceAll('/', '-'); fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');"
+          node -e "const fs = require('fs'); const pkg = require('./package.json'); pkg.version = '1.0.0+' + new Date().toISOString().split('T')[0]; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');"
 
       - run: npm ci
 
-      - name: Configure .npmrc for GitHub Packages
-        run: |
-          echo "@MartynovIvan:registry=https://npm.pkg.github.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
-
       - name: Publish app
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   eslint:
     name: Run ESLint
@@ -86,11 +82,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build
 
       - name: Test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm test --timeout=15000
