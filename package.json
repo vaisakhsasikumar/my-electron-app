@@ -1,5 +1,5 @@
 {
-  "name": "MartynovIvan/my-electron-app",
+  "name": "my-electron-app",
   "version": "1.0.0",
   "type": "module",
   "main": "dist-electron/main.js",
