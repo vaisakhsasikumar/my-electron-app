@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: ["main"]
 
-
 permissions: write-all
 
 jobs:
@@ -23,11 +22,13 @@ jobs:
     steps:
       - name: Github checkout
         uses: actions/checkout@v4
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/' # Default registry for dependencies
+
       - name: Update package.json version
         run: |
           node -e "const fs = require('fs'); const pkg = require('./package.json'); pkg.version = '1.0.0+' + new Date().toLocaleDateString('en-GB').replaceAll('/', '-'); fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');"
@@ -36,7 +37,7 @@ jobs:
 
       - name: Configure .npmrc for GitHub Packages
         run: |
-          echo "@your-github-username:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "@MartynovIvan:registry=https://npm.pkg.github.com/" > .npmrc
           echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
 
       - name: Publish app
@@ -63,7 +64,6 @@ jobs:
       - name: Run ESLint
         run: npm run lint
         continue-on-error: true # Ensure the job continues even if ESLint finds errors
-
 
   build:
     name: Build on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}
