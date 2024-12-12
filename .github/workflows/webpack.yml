@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://npm.pkg.github.com/'
-          scope: '@MartynovIvan'
+          scope: '@vaisakhsasikumar'
 
       - name: Update package.json version
         run: |

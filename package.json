@@ -1,5 +1,5 @@
 {
-  "name": "@MartynovIvan/my-electron-app",
+  "name": "@vaisakhsasikumar/my-electron-app",
   "version": "1.0.0",
   "type": "module",
   "main": "dist-electron/main.js",
@@ -10,7 +10,7 @@
   },
   "license": "Apache-2.0",
   "publishConfig": {
-    "@MartynovIvan:registry": "https://npm.pkg.github.com/"
+    "@vaisakhsasikumar:registry": "https://npm.pkg.github.com/"
   },
   "scripts": {
     "dev": "cross-env DEV= vite",
