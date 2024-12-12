@@ -9,7 +9,7 @@
     "name": "De-risk team",
     "email": "derisk@3tsoftwarelabs.com"
   },
-  "license": "Apache-2.0",
+  "license": "MIT Licence",
   "publishConfig": {
     "@vaisakhsasikumar:registry": "https://npm.pkg.github.com/"
   },
